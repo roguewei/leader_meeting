@@ -16,10 +16,10 @@ export function request(config) {
   });
 
   instance.interceptors.response.use(config => {
-    if (config.data.status === 10000) {
+    if (config.data.status === 10000 || config.data.status === 500205) {
       Message({
-        message: "登录过期",
-        type: "success"
+        message: config.data.msg,
+        type: "error"
       });
       // 重定向
       router.push("/login");

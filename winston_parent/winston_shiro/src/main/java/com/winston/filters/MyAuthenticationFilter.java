@@ -90,6 +90,7 @@ public class MyAuthenticationFilter extends AuthenticatingFilter {
                         || uri.startsWith("/webjars")
                         || uri.startsWith("/favicon")
                         || uri.startsWith("/login")
+                        || uri.startsWith("/logout")
                         || uri.startsWith("/MP_verify_ISgjYtn9aFZNE9xR.txt")
                         || uri.contentEquals("/authorize")
                         || uri.contentEquals("/author")
@@ -97,6 +98,7 @@ public class MyAuthenticationFilter extends AuthenticatingFilter {
                         || uri.startsWith("/weixinLogin")
                         || uri.startsWith("/weixinRedirect")
                         || uri.startsWith("/web/excel/upload")
+                        || uri.startsWith("/web/image/export")
                 ) {
                     return super.onPreHandle(request, response, mappedValue);
                 } else {
