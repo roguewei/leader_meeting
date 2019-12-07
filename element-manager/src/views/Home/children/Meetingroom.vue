@@ -250,6 +250,8 @@ export default {
 
         this.roomList = data.data
         this.total = data.total
+      }).catch(err => {
+        console.log(err);
       })
     },
     handleSizeChange (length) {
@@ -275,6 +277,8 @@ export default {
       }).then(res => {
 
         this.addForm = res.data
+      }).catch(err => {
+        console.log(err);
       })
     },
     showUploadDialog (id) {
@@ -313,6 +317,8 @@ export default {
           })
           this.addDialogVisible = false
           this.getMeetingRoom()
+        }).catch(err => {
+          console.log(err);
         })
       })
     },
@@ -331,6 +337,8 @@ export default {
         })
         this.dialogVisible = false
         this.getMeetingRoom()
+      }).catch(err => {
+        console.log(err);
       })
     },
     clearUpload () {
@@ -362,6 +370,8 @@ export default {
           showClose: true
         })
         this.uploadDiologVisible = false;
+      }).catch(err => {
+        console.log(err);
       })
     }
   },

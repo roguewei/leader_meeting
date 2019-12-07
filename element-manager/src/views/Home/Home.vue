@@ -114,6 +114,8 @@ export default {
           type: 'success',
           showClose: true
         })
+      }).catch(err => {
+        console.log(err);
       })
       window.sessionStorage.clear()
       this.$router.push('/login')
@@ -137,6 +139,8 @@ export default {
         } else {
           this.menuList = data.data
         }
+      }).catch(err => {
+        console.log(err);
       })
     },
     togglemenu () {

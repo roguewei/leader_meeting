@@ -126,6 +126,8 @@ export default {
         document.body.removeChild(downloadElement); //下载完成移除元素
         window.URL.revokeObjectURL(href); //释放blob对象
 
+      }).catch(err => {
+        console.log(err);
       })
     },
     selectRoomGet (val) {
@@ -166,7 +168,8 @@ export default {
         if (this.leaderspan == 0) {
           this.leaderspan = 1
         }
-
+      }).catch(err => {
+        console.log(err);
       })
     },
     getMeetingRoom () {
@@ -179,6 +182,8 @@ export default {
         }
       }).then(data => {
         this.formInline.meetingroomList = data.data
+      }).catch(err => {
+        console.log(err);
       })
     },
     getExcel () {
@@ -191,6 +196,8 @@ export default {
         }
       }).then(data => {
         this.formInline.excelList = data.data;
+      }).catch(err => {
+        console.log(err);
       })
     }
   },

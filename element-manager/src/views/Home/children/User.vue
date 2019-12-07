@@ -216,6 +216,8 @@ export default {
             showClose: true
           })
         }
+      }).catch(err => {
+        console.log(err);
       })
     },
     addUser () {
@@ -240,6 +242,8 @@ export default {
           })
           this.addDialogVisible = false
           this.getUserList()
+        }).catch(err => {
+          console.log(err);
         })
       })
     },
@@ -257,6 +261,8 @@ export default {
           type: 'error',
           showClose: true
         })
+      }).catch(err => {
+        console.log(err);
       })
     },
     userUpdate (userInfo) {
@@ -281,6 +287,8 @@ export default {
         console.log(res);
 
         this.addForm = res.data
+      }).catch(err => {
+        console.log(err);
       })
     },
     addDialogBeforeClose () {
@@ -303,6 +311,8 @@ export default {
         }
         this.userList = data.data
         this.total = data.total
+      }).catch(err => {
+        console.log(err);
       })
     }
   },

@@ -91,6 +91,8 @@ export default {
                 showClose: true
               })
             }
+          }).catch(err => {
+            console.log(err);
           })
         }
       })

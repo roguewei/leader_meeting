@@ -92,6 +92,8 @@ export default {
       }).then(res => {
         this.excelList = res.data
         this.total = res.total
+      }).catch(err => {
+        console.log(err);
       })
     },
     handleSizeChange (length) {
@@ -126,6 +128,8 @@ export default {
         })
         this.dialogVisible = false
         this.getExcelList()
+      }).catch(err => {
+        console.log(err);
       })
     }
   },

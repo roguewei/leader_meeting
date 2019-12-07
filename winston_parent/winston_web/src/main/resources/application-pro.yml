@@ -6,7 +6,7 @@ spring:
   redis:
     port: 6379
     host: 127.0.0.1
-    password: hqty@123
+    password: aixin999@
     timeout: 1000
     database: 1
     expire: 604800
@@ -23,7 +23,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     username: root
-    password: hqty@123
+    password: aixin999@
     url: jdbc:mysql://127.0.0.1:3306/springboot_base?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.jdbc.Driver
     tomcat:

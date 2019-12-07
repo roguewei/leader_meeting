@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -59,7 +60,8 @@ public class ImageServiceImpl implements IImageService {
                 int y = j*(height+10);
                 gh.drawRect(x, y, 80 - 1, 40 - 1);
                 //字体样式 字体格式 字体大小
-                gh.setFont(new Font("Bernard MT", Font.BOLD, 18));
+//                gh.setFont(new Font("Bernard MT", Font.BOLD, 18));
+                gh.setFont(new Font("微软雅黑", Font.BOLD, 18));
                 //设置字体颜色
                 gh.setColor(Color.BLACK);
                 //向图片上写随机字符串
@@ -70,12 +72,25 @@ public class ImageServiceImpl implements IImageService {
                 }
             }
         }
-
+        ServletOutputStream outputStream = null;
         try {
+            response.setHeader("Pragma", "no-cache");
+
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+            response.setContentType("image/jpeg");
+            outputStream = response.getOutputStream();
             // 将内存中的图片通过流动形式输出到客户端
-            ImageIO.write(image, "JPEG", response.getOutputStream());
+            ImageIO.write(image, "jpg", outputStream);
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                if(outputStream != null)
+                    outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
