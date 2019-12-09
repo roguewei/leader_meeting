@@ -4,6 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface IImageService {
 
-    void dropImage(HttpServletResponse response, int roomId, int excelId);
+    void dropImage(HttpServletResponse response, int mId);
 
 }

@@ -2,6 +2,10 @@ package com.winston.utils;
 
 import com.winston.entity.Excel;
 import com.winston.entity.Leader;
+import com.winston.entity.Parameter;
+import com.winston.exception.ErrorException;
+import com.winston.result.CodeMsg;
+import com.winston.service.IParameterService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -9,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +32,9 @@ import java.util.List;
 public class LeaderExcelUtil {
 
     ReadExcel readExcel = new ReadExcel();
+
+    @Autowired
+    private IParameterService parameterService;
 
     /**
      * 读取Excel文件，获取信息集合
@@ -97,18 +105,33 @@ public class LeaderExcelUtil {
                     }else if( c == 1){
                         if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
                             String secondDept = String.valueOf(cell.getNumericCellValue());
-                            leader.setPosition(secondDept.substring(0, secondDept.length()-2>0?secondDept.length()-2:1));
+                            String position = secondDept.substring(0, secondDept.length()-2>0?secondDept.length()-2:1);
+                            Parameter priority_type = parameterService.queryByNameType(position, "priority_type");
+
+                            if(priority_type == null){
+                                throw new ErrorException(CodeMsg.EXCEL_PARAMTER_ERROR);
+                            }
+                            leader.setPosition(position);
+                            leader.setPriority(Integer.valueOf(priority_type.getParamValue()));
                         }else{
-                            leader.setPosition(cell.getStringCellValue());
-                        }
-                    }else if( c == 2){
-                        if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
-                            String postion = String.valueOf(cell.getNumericCellValue());
-                            leader.setPriority(Integer.valueOf(postion.substring(0, postion.length()-2>0?postion.length()-2:1)));
-                        }else{
-                            leader.setPriority(Integer.valueOf(cell.getStringCellValue()));
+                            String position = cell.getStringCellValue();
+                            Parameter priority_type = parameterService.queryByNameType(position, "priority_type");
+
+                            if(priority_type == null){
+                                throw new ErrorException(CodeMsg.EXCEL_PARAMTER_ERROR);
+                            }
+                            leader.setPosition(position);
+                            leader.setPriority(Integer.valueOf(priority_type.getParamValue()));
                         }
                     }
+//                    else if( c == 2){
+//                        if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
+//                            String postion = String.valueOf(cell.getNumericCellValue());
+//                            leader.setPriority(Integer.valueOf(postion.substring(0, postion.length()-2>0?postion.length()-2:1)));
+//                        }else{
+//                            leader.setPriority(Integer.valueOf(cell.getStringCellValue()));
+//                        }
+//                    }
                 }
             }
             //最后将这些全部添加到ilist中
@@ -131,6 +154,8 @@ public class LeaderExcelUtil {
             }
             //再让wb去解析readExcelValue(Workbook wb)方法
             ilist = readExcelValue(wb);
+        }catch (ErrorException e) {
+            throw new ErrorException(e.getCodeMsg());
         } catch (Exception e) {
             e.printStackTrace();
         }

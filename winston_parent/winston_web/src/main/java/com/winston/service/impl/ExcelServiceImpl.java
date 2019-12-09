@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.winston.entity.Excel;
 import com.winston.entity.ExcelExample;
 import com.winston.entity.Leader;
+import com.winston.exception.ErrorException;
 import com.winston.mapper.ExcelMapper;
+import com.winston.result.CodeMsg;
 import com.winston.result.Result;
 import com.winston.service.IExcelService;
 import com.winston.service.IFileService;
@@ -58,6 +60,9 @@ public class ExcelServiceImpl implements IExcelService {
 
         MultipartFile transport = fileService.transport(excel.getPath());
         List<Leader> excelInfo = excelUtil.getExcelInfo(transport);
+        if(excelInfo == null || excelInfo.size() <= 0){
+            throw new ErrorException(CodeMsg.EXCEL_PARAMTER_ERROR);
+        }
         excelInfo.forEach(item -> {
             leaderService.add(item, excelId);
         });
@@ -76,8 +81,6 @@ public class ExcelServiceImpl implements IExcelService {
         Excel excel = mapper.selectByPrimaryKey(id);
         fileService.del(excel.getPath());
         mapper.deleteByPrimaryKey(id);
-        meetingLeaderService.delByEid(id);
-        leaderService.delByEId(id);
     }
 
     @Override
@@ -94,6 +97,11 @@ public class ExcelServiceImpl implements IExcelService {
         List<Excel> excels = mapper.selectByExample(example);
         PageInfo pageInfo = new PageInfo(excels);
         return Result.success(excels, pageInfo.getTotal());
+    }
+
+    @Override
+    public Excel queryById(Integer id) {
+        return mapper.selectByPrimaryKey(id);
     }
 
 }

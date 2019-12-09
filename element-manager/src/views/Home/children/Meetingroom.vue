@@ -13,7 +13,7 @@
       <el-row :gutter="10">
         <el-col :span="12">
           <el-input
-            placeholder="请输入内容"
+            placeholder="请输入会议室名称"
             v-model="queryInfo.name"
             class="input-with-select"
             clearable
@@ -44,20 +44,6 @@
                 icon="el-icon-edit"
                 size="mini"
                 @click="showEditDialog(scope.row.id)"
-              ></el-button>
-            </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="添加会议成员"
-              placement="top"
-              :enterable="false"
-            >
-              <el-button
-                type="success"
-                icon="el-icon-plus"
-                size="mini"
-                @click="showUploadDialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除" placement="top" :enterable="false">
@@ -115,36 +101,6 @@
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addRoom">确 定</el-button>
       </span>
-    </el-dialog>
-
-    <!-- 上传文件 -->
-    <el-dialog
-      title="上传对应excel"
-      :visible.sync="uploadDiologVisible"
-      @close="clearUpload"
-      width="50%"
-    >
-      <!-- 内容主体区 -->
-      <el-upload
-        class="upload-demo"
-        ref="upload"
-        action="http://192.168.101.125:8001/web/excel/upload"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :file-list="fileList"
-        :auto-upload="false"
-        :limit="1"
-        :on-success="uploadSuccess"
-      >
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <el-button
-          style="margin-left: 10px;"
-          size="small"
-          type="success"
-          @click="submitUpload"
-        >上传到服务器</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传一个xls/xlsx文件</div>
-      </el-upload>
     </el-dialog>
 
     <!-- 删除提示对话框 -->
@@ -215,7 +171,6 @@ export default {
         col: ''
       },
       delId: '',
-      fileList: [],
       token: {
         authorization: window.sessionStorage.getItem("token")
       },
@@ -341,39 +296,6 @@ export default {
         console.log(err);
       })
     },
-    clearUpload () {
-      this.$refs.upload.clearFiles()
-    },
-    submitUpload () {
-      // console.log(this.$refs.upload);
-
-      this.$refs.upload.submit();
-    },
-    handleRemove (file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview (file) {
-      console.log(file);
-    },
-    uploadSuccess (response, file, fileList) {
-      request({
-        url: '/web/meetingleader/add',
-        method: 'post',
-        data: {
-          mId: this.selectRoomId,
-          eId: response.data
-        }
-      }).then(res => {
-        this.$message({
-          message: res.msg,
-          type: 'success',
-          showClose: true
-        })
-        this.uploadDiologVisible = false;
-      }).catch(err => {
-        console.log(err);
-      })
-    }
   },
   created () {
     this.getMeetingRoom()

@@ -28,8 +28,8 @@ public class LeaderController {
     private ILeaderService leaderService;
 
     @GetMapping("/sort")
-    public Result sort(int roomId, int excelId){
-        Map<String, Object> map = leaderService.querySort(roomId, excelId);
+    public Result sort(int mId){
+        Map<String, Object> map = leaderService.querySort(mId);
         return Result.success(map);
     }
 

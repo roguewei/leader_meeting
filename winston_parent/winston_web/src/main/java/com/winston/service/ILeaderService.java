@@ -16,7 +16,9 @@ public interface ILeaderService {
     List<Leader> queryInIds(List<Integer> Ids);
 
     // 查询数据排列
-    Map<String, Object> querySort(int roomId, int excelId);
+//    Map<String, Object> querySort(int roomId, int excelId);
+
+    Map<String, Object> querySort(int mId);
 
     void delByEId(Integer eId);
 

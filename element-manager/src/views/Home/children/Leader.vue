@@ -4,7 +4,8 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>会议管理</el-breadcrumb-item>
-      <el-breadcrumb-item>文件列表</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/meeting' }">会议列表</el-breadcrumb-item>
+      <el-breadcrumb-item>座位安排</el-breadcrumb-item>
     </el-breadcrumb>
 
     <!-- 卡片视图区 -->
@@ -13,45 +14,14 @@
       <el-row :gutter="10">
         <el-col :span="24">
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="excel文件">
-              <el-select
-                filterable
-                v-model="formInline.excel"
-                placeholder="选择文件"
-                clearable
-                @change="selectExcelGet"
-              >
-                <el-option
-                  v-for="item in formInline.excelList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-
-            <el-form-item label="会议室">
-              <el-select
-                filterable
-                v-model="formInline.meetingroom"
-                placeholder="选择会议室"
-                clearable
-                @change="selectRoomGet"
-              >
-                <el-option
-                  v-for="item in formInline.meetingroomList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-
             <el-form-item>
-              <el-button type="primary" @click="getMeetingLeader">查询</el-button>
+              <el-button type="success" @click="exportleader" :disabled="!isExist">导出</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" @click="exportleader">导出</el-button>
+              <el-button type="primary" @click="showUploadDialog" v-if="!isExist">导入数据</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="danger" @click="open" v-if="isExist">删除会议人员</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -64,104 +34,175 @@
         </el-col>
       </el-row>
     </el-card>
+
+    <!-- 上传文件 -->
+    <el-dialog
+      title="上传对应excel"
+      :visible.sync="uploadDiologVisible"
+      @close="clearUpload"
+      width="50%"
+    >
+      <!-- 内容主体区 -->
+      <el-upload
+        class="upload-demo"
+        ref="upload"
+        :action="uploadUrl+'/web/excel/upload'"
+        :file-list="fileList"
+        :auto-upload="false"
+        :limit="1"
+        :on-success="uploadSuccess"
+      >
+        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <el-button
+          style="margin-left: 10px;"
+          size="small"
+          type="success"
+          @click="submitUpload"
+        >上传到服务器</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传一个xls/xlsx文件</div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { request } from '../../../network/request'
+import net from "../../../common/const";
 
 export default {
   name: '',
   data () {
     return {
       formInline: {
-        user: '',
         meetingroom: '',
-        excel: '',
-        meetingroomList: [],
-        excelList: []
       },
-      total: '',
-      selectedRoomId: '',
-      selectedExcelId: '',
+      uploadUrl: net.BASE_URL,
       leaderList: [],
       meetingroomRes: {},
-      leaderspan: 8
+      leaderspan: 8,
+      isExist: false,
+      uploadDiologVisible: false,
     }
   },
   methods: {
-    exportleader () {
-      if (this.selectedRoomId === '' || this.selectedExcelId === '') {
+    open () {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        showCancelButton: true
+      }).then(() => {
+        this.delLeader()
+      }).catch(() => {
         this.$message({
-          message: '请选择会议室和文件',
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    showUploadDialog () {
+      this.uploadDiologVisible = true;
+    },
+    // 手动执行文件上传
+    submitUpload () {
+      this.$refs.upload.submit();
+    },
+    uploadSuccess (response, file, fileList) {
+      console.log(response);
+      if (response.status !== 200) {
+        this.$message({
+          message: response.msg,
           type: 'error',
           showClose: true
         })
         return
-      }
-      if (this.leaderList.length === 0) {
-        this.$message({
-          message: '没有数据可以导出',
-          type: 'error',
-          showClose: true
+      } else {
+        request({
+          url: '/web/meetingleader/add',
+          method: 'post',
+          data: {
+            mId: this.$store.state.meetingId,
+            eId: response.data
+          }
+        }).then(res => {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            showClose: true
+          })
+          this.uploadDiologVisible = false;
+          this.getLeaderList()
+        }).catch(err => {
+          console.log(err);
         })
-        return
       }
+    },
+    delLeader () {
       request({
-        url: '/web/image/export',
-        responseType: "blob",
+        url: '/web/meetingleader/delByMid',
         params: {
-          roomId: this.selectedRoomId,
-          excelId: this.selectedExcelId
-        }
-      }).then(res => {
-        console.log(res.type);
-
-        let blob = new Blob([res], { type: res.type })
-        let downloadElement = document.createElement('a')
-        let href = window.URL.createObjectURL(blob); //创建下载的链接
-        downloadElement.href = href;
-        downloadElement.download = "领导座位图"; //下载后文件名
-        document.body.appendChild(downloadElement);
-        downloadElement.click(); //点击下载
-        document.body.removeChild(downloadElement); //下载完成移除元素
-        window.URL.revokeObjectURL(href); //释放blob对象
-
-      }).catch(err => {
-        console.log(err);
-      })
-    },
-    selectRoomGet (val) {
-      this.selectedRoomId = val;
-    },
-    selectExcelGet (val) {
-      this.selectedExcelId = val;
-    },
-    getMeetingLeader () {
-
-      if (this.selectedRoomId === '' || this.selectedExcelId === '') {
-        this.$message({
-          message: '请选择会议室和文件',
-          type: 'error',
-          showClose: true
-        })
-        return
-      }
-      request({
-        url: '/web/leader/sort',
-        params: {
-          roomId: this.selectedRoomId,
-          excelId: this.selectedExcelId
+          mId: this.$store.state.meetingId
         }
       }).then(res => {
         this.$message({
           message: res.msg,
-          type: 'success',
+          type: 'error',
           showClose: true
         })
+        this.isExist = false
+        this.getLeaderList()
+      }).catch(err => {
+        console.log(err);
+      })
+    },
+    exportleader () {
+      request({
+        url: '/web/image/export',
+        responseType: "blob",
+        params: {
+          mId: this.$store.state.meetingId
+        }
+      })
+        .then(res => {
+
+          let result = res.type
+          if (result.indexOf("json") != -1) {
+            this.$message({
+              message: "没有可导出的数据",
+              type: 'error',
+              showClose: true
+            })
+            return
+          }
+
+          let blob = new Blob([res], { type: 'image/png' })
+          let downloadElement = document.createElement('a')
+          let href = window.URL.createObjectURL(blob); //创建下载的链接
+          console.log(href);
+
+          downloadElement.href = href;
+          downloadElement.download = "领导座位图"; //下载后文件名
+          document.body.appendChild(downloadElement);
+          downloadElement.click(); //点击下载
+          document.body.removeChild(downloadElement); //下载完成移除元素
+          window.URL.revokeObjectURL(href); //释放blob对象
+
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    },
+    getLeaderList () {
+      request({
+        url: '/web/leader/sort',
+        params: {
+          mId: this.$store.state.meetingId
+        }
+      }).then(res => {
         if (res.data === null) {
           this.leaderList = []
           return
         }
+        this.isExist = true
         this.meetingroomRes = res.data.meetingroom
         this.leaderList = res.data.leaders
         this.leaderspan = parseInt(24 / this.meetingroomRes.col)
@@ -171,43 +212,10 @@ export default {
       }).catch(err => {
         console.log(err);
       })
-    },
-    getMeetingRoom () {
-      request({
-        url: '/web/meetingroom/',
-        method: 'get',
-        params: {
-          page: 1,
-          length: 100
-        }
-      }).then(data => {
-        this.formInline.meetingroomList = data.data
-      }).catch(err => {
-        console.log(err);
-      })
-    },
-    getExcel () {
-      request({
-        url: '/web/excel',
-        method: 'get',
-        params: {
-          page: 1,
-          length: 100
-        }
-      }).then(data => {
-        this.formInline.excelList = data.data;
-      }).catch(err => {
-        console.log(err);
-      })
     }
   },
   created () {
-    new Promise((resolve, reject) => {
-      this.getMeetingRoom()
-      resolve()
-    }).then(() => {
-      this.getExcel()
-    })
+    this.getLeaderList()
   }
 }
 </script>

@@ -8,18 +8,26 @@ public class ErrorException extends RuntimeException {
 
     private Integer status;
     private String msg;
+    private CodeMsg codeMsg;
 
     public ErrorException(Integer status, String msg){
         this.status= status;
         this.msg=msg;
+
+        this.codeMsg.setStatus(status);
+        this.codeMsg.setMsg(msg);
     }
     public ErrorException(String msg){
         this.status= 500;
         this.msg=msg;
+
+        this.codeMsg.setMsg(msg);
     }
 
     public ErrorException(CodeMsg codeMsg){
         this.status= codeMsg.getStatus();
         this.msg=codeMsg.getMsg();
+
+        this.codeMsg = codeMsg;
     }
 }

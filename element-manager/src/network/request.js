@@ -1,12 +1,13 @@
 import axios from "axios";
 import { Message } from "element-ui";
 import router from "../router/index";
+import net from "../common/const";
 axios.defaults.withCredentials = true;
 
 export function request(config) {
   const instance = axios.create({
-    // baseURL: "http://127.0.0.1:8001",
-    baseURL: "http://120.79.89.24:8001",
+    baseURL: net.BASE_URL,
+    // baseURL: "http://120.79.89.24:8001",
     timeout: 10000
   });
 

@@ -24,19 +24,25 @@
         >
           <el-submenu index="1" key="1">
             <template slot="title">
-              <i class="el-icon-location"></i>
+              <i class="el-icon-setting"></i>
               <span>系统管理</span>
             </template>
             <el-menu-item index="/user" key="1-1">
               <template slot="title">
-                <i class="el-icon-location"></i>
+                <i class="el-icon-user"></i>
                 <span>用户列表</span>
+              </template>
+            </el-menu-item>
+            <el-menu-item index="/parameter" key="1-2">
+              <template slot="title">
+                <i class="el-icon-coin"></i>
+                <span>参数列表</span>
               </template>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2" key="2">
             <template slot="title">
-              <i class="el-icon-location"></i>
+              <i class="el-icon-receiving"></i>
               <span>会议管理</span>
             </template>
             <el-menu-item index="/meetingroom" key="3">
@@ -45,18 +51,24 @@
                 <span>会议室列表</span>
               </template>
             </el-menu-item>
-            <el-menu-item index="/leader" key="4">
+            <el-menu-item index="/meeting" key="4">
               <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>领导作为列表</span>
+                <i class="el-icon-reading"></i>
+                <span>会议列表</span>
               </template>
             </el-menu-item>
-            <el-menu-item index="/excel" key="5">
+            <!-- <el-menu-item index="/leader" key="5">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>领导座位列表</span>
+              </template>
+            </el-menu-item>-->
+            <!-- <el-menu-item index="/excel" key="6">
               <template slot="title">
                 <i class="el-icon-location"></i>
                 <span>文件列表</span>
               </template>
-            </el-menu-item>
+            </el-menu-item>-->
           </el-submenu>
           <!-- 一级菜单 -->
           <!-- <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">

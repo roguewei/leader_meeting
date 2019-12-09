@@ -31,7 +31,13 @@ public class LeaderServiceImpl implements ILeaderService {
     private IMeetingRoomService roomService;
 
     @Autowired
+    private IMeetingService meetingService;
+
+    @Autowired
     private IMeetingLeaderService meetingLeaderService;
+
+    @Autowired
+    private IExcelService excelService;
 
     public void add(Leader leader, Integer excelid) {
         leader.setExcelId(excelid);
@@ -62,11 +68,61 @@ public class LeaderServiceImpl implements ILeaderService {
         return leaders;
     }
 
+//    @Override
+//    public Map<String, Object> querySort(int roomId, int excelId) {
+//        MeetingLeader meetingLeader = new MeetingLeader();
+//        meetingLeader.setmId(roomId);
+//        meetingLeader.seteId(excelId);
+//        List<MeetingLeader> meetingLeaders = meetingLeaderService.query(meetingLeader);
+//
+//        List<Integer> lIds = new ArrayList<>();
+//        meetingLeaders.forEach(item -> {
+//            lIds.add(item.getlId());
+//        });
+//        List<Leader> query = queryInIds(lIds);
+//
+//        Meetingroom meetingroom = roomService.queryById(roomId);
+//
+//        List<List<Leader>> result = new ArrayList<>();
+//
+//        if(query == null || query.size() <=0){
+//            throw new ErrorException(CodeMsg.QUERY_DATA_NUL);
+//        }
+//        for(int j=1; j<=meetingroom.getRow(); j++){
+//            List<Leader> sortClo = new ArrayList<>();
+//            for(int i=(j-1)*meetingroom.getCol(); i<meetingroom.getCol()*j; i++){
+//                if(i == 0){
+//                    sortClo.add(query.get(i));
+//                }else{
+//                    if(i%2 == 0){
+//                        if(i<query.size()){
+//                            sortClo.add(query.get(i));
+//                        }
+//                        else{
+//                            sortClo.add(new Leader());
+//                        }
+//                    }else{
+//                        if(i<query.size()){
+//                            sortClo.add(0, query.get(i));
+//                        }
+//                        else{
+//                            sortClo.add(0, new Leader());
+//                        }
+//                    }
+//                }
+//            }
+//            result.add(sortClo);
+//        }
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("leaders", result);
+//        map.put("meetingroom", meetingroom);
+//        return map;
+//    }
+
     @Override
-    public Map<String, Object> querySort(int roomId, int excelId) {
+    public Map<String, Object> querySort(int mId) {
         MeetingLeader meetingLeader = new MeetingLeader();
-        meetingLeader.setmId(roomId);
-        meetingLeader.seteId(excelId);
+        meetingLeader.setmId(mId);
         List<MeetingLeader> meetingLeaders = meetingLeaderService.query(meetingLeader);
 
         List<Integer> lIds = new ArrayList<>();
@@ -75,16 +131,16 @@ public class LeaderServiceImpl implements ILeaderService {
         });
         List<Leader> query = queryInIds(lIds);
 
-        Meetingroom meetingroom = roomService.queryById(roomId);
+        Map<String, Object> meeting = meetingService.queryById(mId);
+        Meetingroom room = roomService.queryById((Integer) meeting.get("rId"));
 
         List<List<Leader>> result = new ArrayList<>();
-
         if(query == null || query.size() <=0){
             throw new ErrorException(CodeMsg.QUERY_DATA_NUL);
         }
-        for(int j=1; j<=meetingroom.getRow(); j++){
+        for(int j=1; j<=room.getRow(); j++){
             List<Leader> sortClo = new ArrayList<>();
-            for(int i=(j-1)*meetingroom.getCol(); i<meetingroom.getCol()*j; i++){
+            for(int i=(j-1)*room.getCol(); i<room.getCol()*j; i++){
                 if(i == 0){
                     sortClo.add(query.get(i));
                 }else{
@@ -109,7 +165,7 @@ public class LeaderServiceImpl implements ILeaderService {
         }
         Map<String, Object> map = new HashMap<>();
         map.put("leaders", result);
-        map.put("meetingroom", meetingroom);
+        map.put("meetingroom", room);
         return map;
     }
 
@@ -118,6 +174,8 @@ public class LeaderServiceImpl implements ILeaderService {
         LeaderExample example = new LeaderExample();
         example.createCriteria().andExcelIdEqualTo(eId);
         mapper.deleteByExample(example);
+
+        excelService.del(eId);
     }
 
 }

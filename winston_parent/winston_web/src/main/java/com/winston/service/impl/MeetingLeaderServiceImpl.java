@@ -8,10 +8,12 @@ import com.winston.mapper.MeetingLeaderMapper;
 import com.winston.service.ILeaderService;
 import com.winston.service.IMeetingLeaderService;
 import com.winston.service.IMeetingRoomService;
+import com.winston.service.IMeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName MeetingLeaderServiceImpl
@@ -30,7 +32,7 @@ public class MeetingLeaderServiceImpl implements IMeetingLeaderService {
     private ILeaderService leaderService;
 
     @Autowired
-    private IMeetingRoomService roomService;
+    private IMeetingService meetingService;
 
     @Override
     public List<MeetingLeader> query(MeetingLeader meetingLeader) {
@@ -52,10 +54,10 @@ public class MeetingLeaderServiceImpl implements IMeetingLeaderService {
         Leader leader = new Leader();
         leader.setExcelId(meetingLeader.geteId());
         List<Leader> Leaders = leaderService.query(leader);
-        Meetingroom meetingroom = roomService.queryById(meetingLeader.getmId());
+        Map<String, Object> meeting = meetingService.queryById(meetingLeader.getmId());
         Leaders.forEach(item -> {
             meetingLeader.setlId(item.getId());
-            meetingLeader.setmName(meetingroom.getName());
+            meetingLeader.setmName((String) meeting.get("name"));
             mapper.insertSelective(meetingLeader);
         });
     }
@@ -71,6 +73,18 @@ public class MeetingLeaderServiceImpl implements IMeetingLeaderService {
     public void delByMid(Integer mId) {
         MeetingLeaderExample example = new MeetingLeaderExample();
         example.createCriteria().andMIdEqualTo(mId);
-        mapper.deleteByExample(example);
+        List<MeetingLeader> meetingLeaders = mapper.selectByExample(example);
+
+        if(meetingLeaders != null && meetingLeaders.size() > 0){
+            // 删除leader表对应数据
+            leaderService.delByEId(meetingLeaders.get(0).geteId());
+
+            // 删除meeting表对应数据
+            mapper.deleteByExample(example);
+        }
+    }
+
+    @Override
+    public void delLeader(Integer mId) {
     }
 }

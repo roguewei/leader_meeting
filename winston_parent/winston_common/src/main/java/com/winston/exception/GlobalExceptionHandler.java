@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ErrorException.class)
     Result errorException(ErrorException errorException){
-        return Result.error(CodeMsg.QUERY_DATA_NUL);
+        return Result.error(errorException.getCodeMsg());
     }
 
 }

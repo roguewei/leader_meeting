@@ -13,4 +13,6 @@ public interface IMeetingLeaderService {
     void delByEid(Integer eId);
 
     void delByMid(Integer mId);
+
+    void delLeader(Integer mId);
 }

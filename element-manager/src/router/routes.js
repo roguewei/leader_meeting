@@ -7,6 +7,8 @@ const Role = () => import("../views/Home/children/Role");
 const Leader = () => import("../views/Home/children/Leader");
 const Meetingroom = () => import("../views/Home/children/Meetingroom");
 const Excel = () => import("../views/Home/children/Excel");
+const Parameter = () => import("../views/Home/children/Parameter");
+const Meeting = () => import("../views/Home/children/Meeting");
 
 const routes = [
   {
@@ -32,6 +34,10 @@ const routes = [
         component: User
       },
       {
+        path: "/parameter",
+        component: Parameter
+      },
+      {
         path: "/permission",
         component: Permission
       },
@@ -46,6 +52,10 @@ const routes = [
       {
         path: "/meetingroom",
         component: Meetingroom
+      },
+      {
+        path: "/meeting",
+        component: Meeting
       },
       {
         path: "/excel",

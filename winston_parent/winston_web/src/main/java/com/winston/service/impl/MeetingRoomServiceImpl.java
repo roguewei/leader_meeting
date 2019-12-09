@@ -8,11 +8,13 @@ import com.winston.mapper.MeetingroomMapper;
 import com.winston.result.Result;
 import com.winston.service.IMeetingLeaderService;
 import com.winston.service.IMeetingRoomService;
+import com.winston.service.IMeetingService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName MeetingRoomServiceImpl
@@ -29,6 +31,9 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
 
     @Autowired
     private IMeetingLeaderService meetingLeaderService;
+
+    @Autowired
+    private IMeetingService meetingService;
 
     @Override
     public Result query(Meetingroom meetingroom, Integer page, Integer length) {
@@ -61,8 +66,12 @@ public class MeetingRoomServiceImpl implements IMeetingRoomService {
 
     @Override
     public void del(Integer id) {
+        Map<String, Object> meeting = meetingService.queryByRid(id);
+
+        if(meeting != null){
+            meetingService.del((Integer) meeting.get("id"));
+        }
         mapper.deleteByPrimaryKey(id);
-        meetingLeaderService.delByMid(id);
     }
 
 

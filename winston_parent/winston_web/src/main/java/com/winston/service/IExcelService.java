@@ -8,6 +8,8 @@ public interface IExcelService {
 
     Result query(Excel excel, Integer page, Integer length);
 
+    Excel queryById(Integer id);
+
     Integer add(Excel excel);
 
     Integer readExcelFile(MultipartFile file);

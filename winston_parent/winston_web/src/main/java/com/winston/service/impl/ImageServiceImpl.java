@@ -35,9 +35,9 @@ public class ImageServiceImpl implements IImageService {
     private IMeetingRoomService roomService;
 
     @Override
-    public void dropImage(HttpServletResponse response, int roomId, int excelId) {
+    public void dropImage(HttpServletResponse response, int mId) {
 
-        Map<String, Object> querySort = leaderService.querySort(roomId, excelId);
+        Map<String, Object> querySort = leaderService.querySort(mId);
         List<List<Leader>> leaders = (List<List<Leader>>) querySort.get("leaders");
 
         int width = 80;
@@ -74,11 +74,10 @@ public class ImageServiceImpl implements IImageService {
         }
         ServletOutputStream outputStream = null;
         try {
-            response.setHeader("Pragma", "no-cache");
-
+            response.setContentType("image/jpeg");//设置相应类型,告诉浏览器输出的内容为图片
+            response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
             response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0);
-            response.setContentType("image/jpeg");
+            response.setDateHeader("Expire", 0);
             outputStream = response.getOutputStream();
             // 将内存中的图片通过流动形式输出到客户端
             ImageIO.write(image, "jpg", outputStream);

@@ -10,7 +10,7 @@ public class Parameter implements Serializable {
      *
      * @mbg.generated
      */
-    private Long id;
+    private Integer id;
 
     /**
      *
@@ -64,7 +64,7 @@ public class Parameter implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -76,7 +76,7 @@ public class Parameter implements Serializable {
      *
      * @mbg.generated
      */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
