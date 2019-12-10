@@ -25,6 +25,7 @@ import {
   Dialog,
   Select,
   Option,
+  Radio,
   Upload,
   MessageBox
 } from "element-ui";
@@ -56,6 +57,7 @@ Vue.use(Pagination);
 Vue.use(Dialog);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(Radio);
 Vue.use(Upload);
 
 // 弹框需要全局挂载,这样每个组件都可以直接通过this.$message来调用

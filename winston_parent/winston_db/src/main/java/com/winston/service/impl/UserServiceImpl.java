@@ -24,7 +24,6 @@ import java.util.List;
  * @description:
  * @date 2019/7/24 14:25
  */
-@Service("userService")
 public class UserServiceImpl implements IUserService {
 
     @Autowired
@@ -110,7 +109,7 @@ public class UserServiceImpl implements IUserService {
     public void delete(Integer id) {
         User user = mapper.selectByPrimaryKey(id);
         if(user != null){
-            user.setState("1");
+            user.setState("0");
             mapper.updateByPrimaryKeySelective(user);
         }else{
             throw new ErrorException(CodeMsg.USER_DEL_FAILE);

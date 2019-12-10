@@ -25,8 +25,12 @@ public class Result<T> implements Serializable {
     private Long total;
 
     private Result(T data) {
+        if(data.getClass() == String.class){
+            this.msg = (String) data;
+        }else{
+            this.msg = "success";
+        }
         this.status = 200;
-        this.msg = "success";
         this.data = data;
     }
 

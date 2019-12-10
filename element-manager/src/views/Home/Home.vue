@@ -36,7 +36,7 @@
             <el-menu-item index="/parameter" key="1-2">
               <template slot="title">
                 <i class="el-icon-coin"></i>
-                <span>参数列表</span>
+                <span>职位列表</span>
               </template>
             </el-menu-item>
           </el-submenu>

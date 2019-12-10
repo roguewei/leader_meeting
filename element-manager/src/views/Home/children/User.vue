@@ -62,7 +62,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="showEditDialog(scope.row)"
+                @click="showDelDialog(scope.row.id)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -95,7 +95,7 @@
           <el-input v-model="addForm.id"></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="addForm.username"></el-input>
+          <el-input v-model="addForm.username" :disabled="!isAddDialog"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password" :class="{showpwdinput: !isAddDialog}">
           <el-input v-model="addForm.password"></el-input>
@@ -104,7 +104,8 @@
           <el-input v-model="addForm.mobile"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-          <el-input v-model="addForm.sex"></el-input>
+          <el-radio v-model="addForm.sex" label="1">男</el-radio>
+          <el-radio v-model="addForm.sex" label="2">女</el-radio>
         </el-form-item>
       </el-form>
       <!-- 底部按钮区 -->
@@ -119,7 +120,7 @@
       <span>确定删除用户吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="userDel">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -156,6 +157,7 @@ export default {
       userList: [],
       total: 0,
       pageSizes: [5, 10, 100, 500],
+      delId: '',
       dialogVisible: false,
       // 添加用户对话框的显示隐藏
       addDialogVisible: false,
@@ -164,7 +166,7 @@ export default {
         username: '',
         password: '',
         mobile: '',
-        sex: ''
+        sex: '1'
       },
       // 表单验证规则
       addFormRules: {
@@ -221,14 +223,16 @@ export default {
       })
     },
     addUser () {
+      let reqPath = ''
+      if (this.isAddDialog) {
+        reqPath = '/web/user/regester'
+      } else {
+        reqPath = '/web/user/update',
+          // 修改的时候因为不显示密码，所以去掉密码校验规则
+          this.addFormRules.password = []
+      }
       this.$refs.addFormRef.validate(valid => {
         if (!valid) return
-        let reqPath = ''
-        if (this.isAddDialog) {
-          reqPath = '/web/user/regester'
-        } else {
-          reqPath = '/web/user/update'
-        }
         request({
           url: reqPath,
           data: this.addForm,
@@ -247,20 +251,21 @@ export default {
         })
       })
     },
-    userDel (userInfo) {
+    userDel () {
       request({
-        url: '/user/del',
+        url: '/web/user/del',
         method: 'get',
         params: {
-          id: userInfo.id
+          id: this.delId
         }
       }).then(res => {
-        userInfo.state = 0
         this.$message({
-          message: '删除用户成功',
-          type: 'error',
+          message: res.msg,
+          type: 'success',
           showClose: true
         })
+        this.dialogVisible = false
+        this.getUserList()
       }).catch(err => {
         console.log(err);
       })
@@ -290,6 +295,10 @@ export default {
       }).catch(err => {
         console.log(err);
       })
+    },
+    showDelDialog (id) {
+      this.delId = id
+      this.dialogVisible = true
     },
     addDialogBeforeClose () {
       this.$refs.addFormRef.resetFields()

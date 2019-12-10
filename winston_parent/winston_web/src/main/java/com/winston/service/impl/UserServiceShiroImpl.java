@@ -1,9 +1,12 @@
 package com.winston.service.impl;
 
 import com.winston.entity.User;
+import com.winston.exception.ErrorException;
 import com.winston.jwt.comment.RawAccessJwtToken;
 import com.winston.mapper.UserMapper;
+import com.winston.result.CodeMsg;
 import com.winston.utils.PasswordHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +19,7 @@ import java.util.Date;
  * @Date:Create：in 2019/11/27 10:10
  * @Version：
  */
-@Service("userServiceExt")
+@Service
 public class UserServiceShiroImpl extends UserServiceImpl {
 
     @Autowired
@@ -44,4 +47,5 @@ public class UserServiceShiroImpl extends UserServiceImpl {
         mapper.insert(user);
         return user.getId();
     }
+
 }

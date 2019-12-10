@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private IUserService userServiceExt;
+    private IUserService userService;
 
     @ApiOperation(value = "用户查询", notes = "用户查询")//接口说明
     @ApiImplicitParams({
@@ -37,7 +37,7 @@ public class UserController {
     public Result query(@RequestParam(required = false, defaultValue = "1") int page,
                         @RequestParam(required = false, defaultValue = "10") int length,
                         User user){
-        return userServiceExt.queryByUser(user, page, length);
+        return userService.queryByUser(user, page, length);
     }
 
     @ApiOperation(value = "用户id查询", notes = "用户id查询")//接口说明
@@ -51,7 +51,7 @@ public class UserController {
     })
     @GetMapping("/{id}")
     public Result query(@PathVariable Integer id){
-        return Result.success(userServiceExt.queryById(id));
+        return Result.success(userService.queryById(id));
     }
 
     @ApiOperation(value = "注册用户", notes = "注册用户")//接口说明
@@ -70,8 +70,8 @@ public class UserController {
             @ApiResponse(code = 500203, message = "未登录")
     })
     @PostMapping("/regester")
-    public Result regester(User user){
-        userServiceExt.save(user);
+    public Result regester(@RequestBody User user){
+        userService.save(user);
         return Result.success("新增用户成功");
     }
 
@@ -93,13 +93,13 @@ public class UserController {
     })
     @PostMapping("/update")
     public Result update(@RequestBody User user){
-        userServiceExt.update(user);
+        userService.update(user);
         return Result.success("修改用户成功");
     }
 
     @GetMapping("/del")
-    public Result del(Long userId){
-//        userService.del(userId);
+    public Result del(Integer id){
+        userService.delete(id);
         return Result.success("删除用户成功");
     }
 

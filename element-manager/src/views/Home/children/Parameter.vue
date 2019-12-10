@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-      <el-breadcrumb-item>参数列表</el-breadcrumb-item>
+      <el-breadcrumb-item>职位列表</el-breadcrumb-item>
     </el-breadcrumb>
 
     <!-- 卡片视图区 -->
@@ -30,9 +30,9 @@
       <!-- 表格 -->
       <el-table :data="parameterist" style="width: 100%" boder stripe>
         <el-table-column type="index" width="50"></el-table-column>
-        <el-table-column prop="paramName" label="参数名" width="180"></el-table-column>
-        <el-table-column prop="paramType" label="参数类型" width="180"></el-table-column>
-        <el-table-column prop="paramValue" label="参数值" width="180"></el-table-column>
+        <el-table-column prop="paramName" label="职位名" width="180"></el-table-column>
+        <el-table-column prop="paramType" label="职位类型" width="180"></el-table-column>
+        <el-table-column prop="paramValue" label="职位优先级" width="180"></el-table-column>
         <el-table-column label="操作">
           <!-- 使用作用域插槽获取当前行的数据 -->
           <template slot-scope="scope">
@@ -70,7 +70,7 @@
 
     <!-- 新增、修改用户对话框 -->
     <el-dialog
-      title="新增、修改参数"
+      :title="dialogTitle"
       :visible.sync="addDialogVisible"
       width="50%"
       @close="addDialogClose"
@@ -81,30 +81,13 @@
         <el-form-item label="id" prop="id" class="el-form-item-id">
           <el-input v-model="addForm.id"></el-input>
         </el-form-item>
-        <el-form-item label="参数名" prop="paramName">
+        <el-form-item label="职位名" prop="paramName">
           <el-input v-model="addForm.paramName"></el-input>
         </el-form-item>
-        <el-form-item label="参数类型" prop="paramType">
+        <el-form-item label="职位类型" prop="paramType">
           <el-input v-model="addForm.paramType"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="参数类型" prop="type">
-          <el-select
-            filterable
-            v-model="addForm.paramType"
-            placeholder="参数类型"
-            clearable
-            @change="selectParamterChange"
-            @focus="selectParamter"
-          >
-            <el-option
-              v-for="item in addForm.type"
-              :key="item.id"
-              :label="item.paramName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>-->
-        <el-form-item label="参数值" prop="paramValue">
+        <el-form-item label="职位优先级" prop="paramValue">
           <el-input v-model="addForm.paramValue"></el-input>
         </el-form-item>
       </el-form>
@@ -116,8 +99,8 @@
     </el-dialog>
 
     <!-- 提示对话框 -->
-    <el-dialog title="注销参数" :visible.sync="dialogVisible" width="30%">
-      <span>确定删除该参数吗？</span>
+    <el-dialog title="删除职位" :visible.sync="dialogVisible" width="30%">
+      <span>确定删除该职位吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="delParameter">确 定</el-button>
@@ -153,6 +136,7 @@ export default {
       pageSizes: [5, 10, 100, 500],
       // 添加用户对话框的显示隐藏
       addDialogVisible: false,
+      dialogTitle: '',
       // 用户列表参数
       queryInfo: {
         paramName: '',
@@ -249,6 +233,7 @@ export default {
     showAddDialog () {
       this.isAddDialog = true
       this.addDialogVisible = true
+      this.dialogTitle = '新增职位'
     },
     showDelDialog (id) {
       this.dialogVisible = true
@@ -257,7 +242,7 @@ export default {
     showEditDialog (id) {
       this.addDialogVisible = true
       this.isAddDialog = false
-
+      this.dialogTitle = '修改职位'
       request({
         url: '/web/parameter/queryById',
         method: 'get',

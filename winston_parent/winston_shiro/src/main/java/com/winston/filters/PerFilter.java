@@ -72,13 +72,17 @@ public class PerFilter extends AuthorizationFilter {
             codeMsg = CodeMsg.IS_NOT_LOGIN;
         }else{
             List<Permission> permissionList = permissionService.queryByUserName(user.getUsername());
-            for(Permission permission : permissionList){
-                if(subject.isPermitted(permission.getPerurl())){
-                    // 此处不管有没有权限都返回true，所以需要配置异常拦截器CustomExceptionHandler
-                    return true;
+            if(permissionList != null && permissionList.size()>0){
+                for(Permission permission : permissionList){
+                    if(subject.isPermitted(permission.getPerurl())){
+                        // 此处不管有没有权限都返回true，所以需要配置异常拦截器ExceptionHandler
+                        return true;
+                    }
                 }
             }
             codeMsg = CodeMsg.HAS_NOT_PERMISSION;
+            // 尚未做权限相关限制，先全部放行
+            return true;
         }
         outPut(response, codeMsg);
         return false;

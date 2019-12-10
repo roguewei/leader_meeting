@@ -18,7 +18,11 @@ export function request(config) {
   });
 
   instance.interceptors.response.use(config => {
-    if (config.data.status === 10000 || config.data.status === 500205) {
+    if (
+      config.data.status === 10000 ||
+      config.data.status === 500205 ||
+      config.data.status === 500105
+    ) {
       Message({
         message: config.data.msg,
         type: "error"

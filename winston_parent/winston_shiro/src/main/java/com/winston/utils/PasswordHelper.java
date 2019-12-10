@@ -26,6 +26,16 @@ public class PasswordHelper {
 
 	/**
 	 * 加密加盐
+	 * @param username
+	 * @param password
+	 */
+	public String encryptPassword(String username, String password) {
+		String newPassword = new SimpleHash(algorithmName, password,  ByteSource.Util.bytes(username), hashIterations).toHex();
+		return newPassword;
+	}
+
+	/**
+	 * 加密加盐
 	 * @param user
 	 */
 	public void encryptPasswordWx(User user) {

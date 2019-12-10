@@ -65,7 +65,7 @@ winston:
       responseType: code
       scope: snsapi_login
     jwt:
-      tokenExpirationTime: 3600000
+      tokenExpirationTime: 604800000
       tokenIssuer: winston-pms
       tokenSigningKey: 0c34c2245a035786e936fec8b7e93541
       redisPrefix: fswx
